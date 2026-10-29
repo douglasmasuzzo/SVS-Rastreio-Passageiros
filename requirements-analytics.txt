@@ -1,0 +1,9 @@
+-r requirements.txt
+pandas>=2.2
+numpy>=1.26
+scikit-learn>=1.5
+matplotlib>=3.8
+jupyterlab>=4.2
+# Opcional: análise geoespacial vetorial (exige GDAL no sistema)
+# geopandas>=1.0
+# folium>=0.17
