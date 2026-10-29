@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0f766e" />
+    <title>Minha viagem — SVS Rastreio</title>
+    <meta
+      name="description"
+      content="Consulte a viagem do transporte público de saúde com CPF e data de nascimento. Protótipo acadêmico com dados sintéticos."
+    />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/icons/icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/css/app.css" />
+  </head>
+  <body>
+    <a class="skip" href="#conteudo">Ir para o conteúdo</a>
+
+    <header class="topo">
+      <div class="topo-interno">
+        <a class="marca" href="/">
+          <span class="marca-selo" aria-hidden="true">SVS</span>
+          <span>Rastreio<small>Transporte público de saúde</small></span>
+        </a>
+        <nav class="principal" aria-label="Navegação principal">
+          <a href="/">Rastreio</a>
+          <a href="/paciente.html" aria-current="page">Passageiro</a>
+          <a href="/motorista.html">Motorista</a>
+          <a href="/admin.html">Painel</a>
+          <a href="/sobre.html">Sobre</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="conteudo" class="container">
+      <section class="hero">
+        <span class="etiqueta">Área do passageiro</span>
+        <h1>Consulte a sua viagem</h1>
+        <p>
+          Informe o CPF e a data de nascimento do paciente para ver a autorização municipal,
+          o veículo designado e o link de acompanhamento em tempo real.
+        </p>
+      </section>
+
+      <div class="grid duas">
+        <section class="card" aria-labelledby="titulo-consulta">
+          <h2 id="titulo-consulta">Identificação</h2>
+          <p class="miudo">
+            Os dois campos são obrigatórios. O CPF sozinho não é aceito como credencial — esta é
+            uma melhoria de segurança em relação ao sistema observado.
+          </p>
+
+          <form id="form-consulta" novalidate>
+            <div class="campo">
+              <label for="cpf">CPF do paciente</label>
+              <input
+                id="cpf"
+                name="cpf"
+                type="text"
+                inputmode="numeric"
+                autocomplete="off"
+                placeholder="000.000.000-00"
+                maxlength="14"
+                aria-describedby="dica-cpf"
+                required
+              />
+              <span class="dica" id="dica-cpf">Somente números ou com pontos e traço.</span>
+            </div>
+
+            <div class="linha">
+              <div class="campo">
+                <label for="nascimento">Data de nascimento</label>
+                <input
+                  id="nascimento"
+                  name="nascimento"
+                  type="date"
+                  min="1900-01-01"
+                  autocomplete="bday"
+                  required
+                />
+              </div>
+              <div class="campo">
+                <label for="data-viagem">Data da viagem</label>
+                <input id="data-viagem" name="data" type="date" min="1900-01-01" />
+                <span class="dica">Em branco = hoje.</span>
+              </div>
+            </div>
+
+            <div class="acoes" style="margin-top: 0.4rem">
+              <button class="botao" type="submit">Consultar viagem</button>
+              <button class="botao secundario" type="reset">Limpar</button>
+            </div>
+          </form>
+
+          <p class="miudo" style="margin-top: 0.9rem">
+            Demonstração com dados sintéticos:
+          </p>
+          <div class="acoes" id="atalhos-demo" aria-label="Credenciais de demonstração">
+            <button
+              class="botao secundario pequeno"
+              type="button"
+              data-cpf="90000010138"
+              data-nascimento="1990-05-12"
+            >
+              Paciente Alfa
+            </button>
+            <button
+              class="botao secundario pequeno"
+              type="button"
+              data-cpf="90000010219"
+              data-nascimento="1985-11-03"
+            >
+              Paciente Beta
+            </button>
+            <button
+              class="botao secundario pequeno"
+              type="button"
+              data-cpf="90000010308"
+              data-nascimento="1978-02-20"
+            >
+              Paciente Gama
+            </button>
+          </div>
+
+          <div class="aviso info" style="margin-top: 1rem">
+            <strong>Privacidade:</strong> os dados informados não são gravados no navegador.
+            A consulta é registrada em trilha de auditoria no servidor, sem armazenar o CPF.
+          </div>
+        </section>
+
+        <section class="card" id="resultado" aria-live="polite" aria-busy="false" hidden>
+          <div id="resultado-conteudo"></div>
+        </section>
+      </div>
+
+      <p class="selo-lgpd" style="margin-top: 1rem">
+        <span aria-hidden="true">🔒</span>
+        Respostas de erro genéricas, CPF mascarado e limite de tentativas por origem.
+      </p>
+    </main>
+
+    <footer class="rodape">
+      <div class="rodape-interno">
+        <span>SVS Rastreio — protótipo acadêmico de referência (dados sintéticos).</span>
+        <span
+          ><a href="/docs" target="_blank" rel="noopener">Documentação da API</a> ·
+          <a href="/sobre.html">Metodologia</a></span
+        >
+      </div>
+    </footer>
+
+    <script src="/js/comum.js"></script>
+    <script src="/js/paciente.js"></script>
+  </body>
+</html>

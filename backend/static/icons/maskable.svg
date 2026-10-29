@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="SVS Rastreio">
+  <rect width="512" height="512" fill="#0f766e" />
+  <g transform="translate(51.2 51.2) scale(.8)">
+    <path d="M104 404c62-30 124-30 186 0s122 30 178 0" fill="none" stroke="#5eead4" stroke-width="22" stroke-linecap="round" opacity=".75" />
+    <path d="M256 74c-73 0-132 59-132 132 0 99 132 232 132 232s132-133 132-232c0-73-59-132-132-132z" fill="#ffffff" />
+    <circle cx="256" cy="206" r="52" fill="#0f766e" />
+    <circle cx="256" cy="206" r="22" fill="#5eead4" />
+  </g>
+</svg>

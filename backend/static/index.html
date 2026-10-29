@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0f766e" />
+    <title>SVS Rastreio — acompanhamento público</title>
+    <meta
+      name="description"
+      content="Acompanhe em tempo real o veículo do transporte público de saúde por placa. Protótipo acadêmico de referência (dados sintéticos)."
+    />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/icons/icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="/css/app.css" />
+  </head>
+  <body>
+    <a class="skip" href="#conteudo">Ir para o conteúdo</a>
+
+    <header class="topo">
+      <div class="topo-interno">
+        <a class="marca" href="/">
+          <span class="marca-selo" aria-hidden="true">SVS</span>
+          <span>Rastreio<small>Transporte público de saúde</small></span>
+        </a>
+        <nav class="principal" aria-label="Navegação principal">
+          <a href="/" aria-current="page">Rastreio</a>
+          <a href="/paciente.html">Passageiro</a>
+          <a href="/motorista.html">Motorista</a>
+          <a href="/admin.html">Painel</a>
+          <a href="/sobre.html">Sobre</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="conteudo" class="container">
+      <section class="hero">
+        <span class="etiqueta">Rastreamento público</span>
+        <h1>Saiba onde está o veículo da sua viagem</h1>
+        <p>
+          Informe a placa para ver a posição aproximada, o status de conexão e as viagens do dia.
+          Nenhum dado pessoal de passageiro é exibido nesta tela.
+        </p>
+      </section>
+
+      <section class="card" aria-labelledby="titulo-busca">
+        <h2 id="titulo-busca">Buscar veículo por placa</h2>
+        <form id="form-busca" class="linha" role="search">
+          <div class="campo" style="flex: 2 1 240px">
+            <label for="placa">Placa</label>
+            <input
+              id="placa"
+              name="placa"
+              type="text"
+              inputmode="text"
+              autocomplete="off"
+              autocapitalize="characters"
+              spellcheck="false"
+              placeholder="Ex.: SVS1A23"
+              maxlength="8"
+              aria-describedby="dica-placa"
+            />
+            <span class="dica" id="dica-placa">Aceita Mercosul e padrão antigo, com ou sem hífen.</span>
+          </div>
+          <button class="botao" type="submit">Buscar veículo</button>
+        </form>
+        <div class="acoes" id="sugestoes" style="margin-top: 0.8rem" aria-label="Placas de demonstração">
+          <span class="miudo">Demonstração:</span>
+          <button class="botao secundario pequeno" type="button" data-placa="SVS1A23">SVS1A23</button>
+          <button class="botao secundario pequeno" type="button" data-placa="SVS2B34">SVS2B34</button>
+          <button class="botao secundario pequeno" type="button" data-placa="DEM0C56">DEM0C56</button>
+        </div>
+      </section>
+
+      <div class="grid frota" style="margin-top: 1rem">
+        <section class="card" aria-labelledby="titulo-frota">
+          <div class="card-cabecalho">
+            <div class="cresce">
+              <h2 id="titulo-frota">Frota monitorada</h2>
+              <p class="miudo">Status calculado pela última posição recebida.</p>
+            </div>
+          </div>
+          <ul id="lista-veiculos" class="lista-veiculos" aria-live="polite" aria-busy="true"></ul>
+        </section>
+
+        <section class="card" id="painel" aria-live="polite" aria-busy="false">
+          <div class="vazio" id="painel-vazio">
+            <strong>Nenhum veículo selecionado</strong>
+            Escolha uma placa na lista ou use a busca acima para abrir o mapa.
+          </div>
+          <div id="painel-conteudo" class="oculto"></div>
+        </section>
+      </div>
+
+      <p class="selo-lgpd" style="margin-top: 1rem">
+        <span aria-hidden="true">🔒</span>
+        Posição arredondada (~11 m), trilha limitada a 12 h e nenhum dado de paciente exposto.
+      </p>
+    </main>
+
+    <footer class="rodape">
+      <div class="rodape-interno">
+        <span>SVS Rastreio — protótipo acadêmico de referência (dados sintéticos).</span>
+        <span><a href="/docs" target="_blank" rel="noopener">Documentação da API</a> · <a href="/sobre.html">Metodologia</a></span>
+      </div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="/js/comum.js"></script>
+    <script src="/js/rastreio.js"></script>
+  </body>
+</html>

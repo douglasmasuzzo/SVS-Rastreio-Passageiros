@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0f766e" />
+    <title>Sobre o protótipo — SVS Rastreio</title>
+    <meta
+      name="description"
+      content="Metodologia de engenharia reversa caixa-preta, decisões de arquitetura, segurança, LGPD e limitações do protótipo acadêmico SVS Rastreio."
+    />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/icons/icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/css/app.css" />
+  </head>
+  <body>
+    <a class="skip" href="#conteudo">Ir para o conteúdo</a>
+
+    <header class="topo">
+      <div class="topo-interno">
+        <a class="marca" href="/">
+          <span class="marca-selo" aria-hidden="true">SVS</span>
+          <span>Rastreio<small>Transporte público de saúde</small></span>
+        </a>
+        <nav class="principal" aria-label="Navegação principal">
+          <a href="/">Rastreio</a>
+          <a href="/paciente.html">Passageiro</a>
+          <a href="/motorista.html">Motorista</a>
+          <a href="/admin.html">Painel</a>
+          <a href="/sobre.html" aria-current="page">Sobre</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="conteudo" class="container">
+      <section class="hero">
+        <span class="etiqueta">Documentação viva</span>
+        <h1>Um protótipo de referência, não uma cópia</h1>
+        <p>
+          Este projeto aplica engenharia reversa de caixa-preta a um sistema de rastreio de
+          transporte público de saúde observado em sete capturas de tela. O resultado é uma
+          reimplementação <em>clean-room</em>: comportamento compreendido, código próprio e
+          dados 100% sintéticos.
+        </p>
+      </section>
+
+      <nav class="indice" aria-label="Nesta página">
+        <a href="#metodo">Método</a>
+        <a href="#evidencias">Evidências</a>
+        <a href="#achados">Achados</a>
+        <a href="#decisoes">Decisões</a>
+        <a href="#arquitetura">Arquitetura</a>
+        <a href="#privacidade">Privacidade</a>
+        <a href="#limites">Limites</a>
+        <a href="#documentacao">Documentação</a>
+      </nav>
+
+      <section class="card" id="metodo" aria-labelledby="titulo-metodo">
+        <h2 id="titulo-metodo">Método: caixa-preta e sala limpa</h2>
+        <div class="grid duas">
+          <div>
+            <h3>1. Observação</h3>
+            <p>
+              Foram analisadas apenas as telas públicas do sistema: rastreio por placa, consulta
+              por CPF, visão do motorista e mapa. Não houve acesso ao código-fonte, ao banco de
+              dados, à infraestrutura ou a qualquer credencial do sistema original.
+            </p>
+            <h3>2. Modelagem do comportamento</h3>
+            <p>
+              Cada tela foi descrita como entradas, estados, transições e saídas. Termos do domínio
+              (autorização municipal, embarque, status online/offline, trilha) foram inferidos a
+              partir do que é exibido ao usuário.
+            </p>
+          </div>
+          <div>
+            <h3>3. Especificação própria</h3>
+            <p>
+              O comportamento foi reescrito como requisitos, contrato OpenAPI e modelo de dados
+              próprio. Nenhum trecho de código, marca, layout ou ativo visual foi copiado.
+            </p>
+            <h3>4. Reimplementação e validação</h3>
+            <p>
+              O protótipo em FastAPI + PWA foi construído com dados sintéticos e validado por uma
+              suíte automatizada de testes de contrato, segurança e LGPD.
+            </p>
+          </div>
+        </div>
+        <div class="aviso info">
+          <strong>Por que isso importa para o TCC:</strong> a contribuição não é “clonar” um
+          aplicativo, mas demonstrar um processo reproduzível de compreensão de sistema,
+          identificação de riscos e proposição de melhorias verificáveis.
+        </div>
+      </section>
+
+      <section class="card" id="evidencias" aria-labelledby="titulo-evidencias">
+        <h2 id="titulo-evidencias">As sete evidências observadas</h2>
+        <p class="miudo">
+          As capturas originais não são versionadas. Cópias anonimizadas, com CPF, nomes e placas
+          redigidos, ficam em <code>reverse-engineering/evidencias/</code>, acompanhadas de um
+          manifesto com data, origem e descrição.
+        </p>
+        <div class="tabela-envoltorio">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Tela</th>
+                <th scope="col">Comportamento observado</th>
+                <th scope="col">Uso no protótipo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="num">E01</td>
+                <td>Rastreio público</td>
+                <td>Busca por placa, mapa Leaflet, status Online/Offline, velocidade, distância e precisão.</td>
+                <td>Endpoint público com posição arredondada e trilha de 12 h.</td>
+              </tr>
+              <tr>
+                <td class="num">E02</td>
+                <td>Detalhe do veículo</td>
+                <td>Identificação do veículo, operadora, modelo e última atualização.</td>
+                <td>Resumo público sem dados de passageiros.</td>
+              </tr>
+              <tr>
+                <td class="num">E03</td>
+                <td>Consulta do passageiro</td>
+                <td>Consulta por CPF com exibição de autorização municipal e vínculo com a viagem.</td>
+                <td>Consulta com CPF + data de nascimento, resposta genérica e auditoria.</td>
+              </tr>
+              <tr>
+                <td class="num">E04</td>
+                <td>Viagem do passageiro</td>
+                <td>Destino, horário, veículo e status da autorização.</td>
+                <td>Cartão de viagem com link de acompanhamento e comprovante imprimível.</td>
+              </tr>
+              <tr>
+                <td class="num">E05</td>
+                <td>Visão do motorista</td>
+                <td>Lista de pacientes por placa e data, com nomes e check-in.</td>
+                <td>Sessão por placa + PIN e lista restrita à viagem do veículo.</td>
+              </tr>
+              <tr>
+                <td class="num">E06</td>
+                <td>Mapa operacional</td>
+                <td>Regiões de Santos/São Vicente e destinos em Diadema/São Paulo.</td>
+                <td>Cenário sintético inspirado na logística metropolitana de saúde.</td>
+              </tr>
+              <tr>
+                <td class="num">E07</td>
+                <td>Estados de rede</td>
+                <td>Indicadores de conexão e mensagens de indisponibilidade.</td>
+                <td>Status online/offline, fallback textual e service worker.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card" id="achados" aria-labelledby="titulo-achados">
+        <h2 id="titulo-achados">Achados e melhorias propostas</h2>
+        <div class="tabela-envoltorio">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Observação</th>
+                <th scope="col">Risco</th>
+                <th scope="col">Resposta no protótipo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="num">A-01</td>
+                <td>Consulta do passageiro aparentemente baseada apenas no CPF.</td>
+                <td>Enumeração e acesso indevido a dados de saúde.</td>
+                <td>Segundo fator (data de nascimento), erro genérico, rate limit e auditoria.</td>
+              </tr>
+              <tr>
+                <td class="num">A-02</td>
+                <td>CPF e nome completos visíveis na tela do motorista.</td>
+                <td>Exposição desnecessária em dispositivo compartilhado.</td>
+                <td>CPF mascarado, sessão curta e acesso limitado ao veículo.</td>
+              </tr>
+              <tr>
+                <td class="num">A-03</td>
+                <td>Posição e trilha em tempo real sem limite de retenção aparente.</td>
+                <td>Vigilância e correlação de trajetos.</td>
+                <td>Arredondamento (~11 m), trilha pública de 12 h e telemetria append-only.</td>
+              </tr>
+              <tr>
+                <td class="num">A-04</td>
+                <td>Autenticação do motorista por placa, sem segundo fator evidente.</td>
+                <td>Acesso à lista de pacientes por quem conhece a placa.</td>
+                <td>PIN com hash HMAC, token assinado de 8 h e bloqueio por tentativas.</td>
+              </tr>
+              <tr>
+                <td class="num">A-05</td>
+                <td>Ausência de trilha de auditoria visível para consultas sensíveis.</td>
+                <td>Dificuldade de responsabilização e resposta a incidentes.</td>
+                <td>Audit log com ator, ação, recurso, IP pseudonimizado e horário.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card" id="decisoes" aria-labelledby="titulo-decisoes">
+        <h2 id="titulo-decisoes">Decisões de projeto</h2>
+        <div class="grid duas">
+          <div>
+            <h3>Arquitetura</h3>
+            <ul class="lista-simples">
+              <li>FastAPI + SQLAlchemy 2.0, contrato OpenAPI gerado a partir dos schemas Pydantic.</li>
+              <li>PWA vanilla, sem etapa de build, com Leaflet via CDN e fallback textual.</li>
+              <li>SQLite no desenvolvimento; PostgreSQL/PostGIS como alvo de produção documentado.</li>
+              <li>Telemetria append-only, com horário de captura e de recebimento separados.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Domínio</h3>
+            <ul class="lista-simples">
+              <li>Município, operadora, veículo, motorista, paciente e unidade de saúde.</li>
+              <li>Viagem, autorização municipal, embarque, evento operacional e posição.</li>
+              <li>Autorização é o vínculo entre paciente e viagem; sem ela, não há embarque.</li>
+              <li>Estados explícitos: planejada, autorizada, em andamento, concluída e cancelada.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" id="arquitetura" aria-labelledby="titulo-arquitetura">
+        <h2 id="titulo-arquitetura">Arquitetura em uma página</h2>
+        <pre class="diagrama" aria-label="Diagrama textual da arquitetura">
+Navegador (PWA)                API (FastAPI)                 Dados
+─────────────────              ─────────────────             ─────────────────
+rastreio público  ──GET──────▶ /api/v1/publico/*   ───────▶ posicao (append-only)
+passageiro        ──POST─────▶ /passageiro/consulta ──────▶ paciente + autorizacao
+motorista         ──Bearer───▶ /motorista/*        ───────▶ viagem, embarque, evento
+painel            ──X-Admin-Key▶ /admin/*          ───────▶ kpis, csv, validacao
+                               │
+                               ├─ HMAC de CPF, PIN e IP
+                               ├─ rate limiting por origem
+                               └─ audit_log (LGPD)
+        </pre>
+        <p class="miudo">
+          A separação entre posição pública e dados pessoais é intencional: o endpoint público
+          nunca recebe um identificador de paciente. O mapa mostra o veículo, não quem está nele.
+        </p>
+      </section>
+
+      <section class="card" id="privacidade" aria-labelledby="titulo-privacidade">
+        <h2 id="titulo-privacidade">Privacidade e conformidade (LGPD)</h2>
+        <div class="grid duas">
+          <div>
+            <h3>Controles implementados</h3>
+            <ul class="lista-simples">
+              <li>CPF pseudonimizado com HMAC-SHA256 e pepper; nunca em texto claro.</li>
+              <li>CPF mascarado em todas as respostas de API e telas.</li>
+              <li>Consulta do passageiro com dois fatores e mensagem de erro genérica.</li>
+              <li>Posição pública arredondada para quatro casas decimais (~11 m).</li>
+              <li>Trilha pública limitada às últimas 12 horas.</li>
+              <li>Auditoria de consultas, embarques, validações e exportações.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Princípios</h3>
+            <ul class="lista-simples">
+              <li>Minimização: a tela pública não conhece passageiros.</li>
+              <li>Finalidade: cada endpoint declara o uso operacional do dado.</li>
+              <li>Segurança: segredos por ambiente, sem padrões em produção.</li>
+              <li>Prestação de contas: trilha de auditoria e documentação de decisões.</li>
+              <li>Não discriminação: acessibilidade e ausência de dados reais.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="aviso" style="margin-top: 0.8rem">
+          <strong>Limite importante:</strong> este é um protótipo acadêmico. A conformidade plena
+          exige avaliação de impacto, base legal, contratos, retenção formal, DPO e testes de
+          segurança independentes antes de qualquer uso real.
+        </div>
+      </section>
+
+      <section class="card" id="limites" aria-labelledby="titulo-limites">
+        <h2 id="titulo-limites">Limitações e não-objetivos</h2>
+        <ul class="lista-simples">
+          <li>Não é uma cópia do sistema observado e não reutiliza seus ativos, marca ou código.</li>
+          <li>Não há integração real com prefeituras, operadoras, SMS, mapas pagos ou prontuários.</li>
+          <li>O cenário geográfico e os tempos são sintéticos; não representam uma operação real.</li>
+          <li>Autenticação de administrador por chave é adequada ao protótipo, não a produção multiusuário.</li>
+          <li>SQLite não substitui PostgreSQL/PostGIS para consultas geoespaciais e concorrência.</li>
+          <li>OTIF é uma aproximação operacional, não um indicador contratual validado.</li>
+        </ul>
+      </section>
+
+      <section class="card" id="documentacao" aria-labelledby="titulo-documentacao">
+        <h2 id="titulo-documentacao">Documentação do repositório</h2>
+        <p class="miudo">
+          O navegador serve a API e o PWA. Os documentos completos ficam no diretório
+          <code>docs/</code> do repositório.
+        </p>
+        <div class="grid duas">
+          <div>
+            <ul class="lista-simples">
+              <li><code>docs/01-metodologia.md</code> — protocolo de engenharia reversa.</li>
+              <li><code>docs/02-dossie-engenharia-reversa.md</code> — evidências e achados.</li>
+              <li><code>docs/03-requisitos.md</code> — requisitos funcionais e não funcionais.</li>
+              <li><code>docs/04-arquitetura.md</code> — decisões e diagramas.</li>
+              <li><code>docs/05-modelo-de-dados.md</code> — entidades e integridade.</li>
+              <li><code>docs/06-api.md</code> — contrato e exemplos.</li>
+            </ul>
+          </div>
+          <div>
+            <ul class="lista-simples">
+              <li><code>docs/07-seguranca-lgpd.md</code> — ameaças e controles.</li>
+              <li><code>docs/08-plano-de-testes.md</code> — estratégia e cobertura.</li>
+              <li><code>docs/09-roadmap-incremental.md</code> — evolução proposta.</li>
+              <li><code>docs/10-relatorio-tecnico.md</code> — relatório v2 em estrutura ABNT.</li>
+              <li><code>docs/11-etica-e-conformidade.md</code> — ética e limites.</li>
+              <li><code>docs/adr/</code> — decisões arquiteturais registradas.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="acoes" style="margin-top: 1rem">
+          <a class="botao" href="/docs" target="_blank" rel="noopener">Abrir Swagger</a>
+          <a class="botao secundario" href="/openapi.json" target="_blank" rel="noopener">Baixar OpenAPI JSON</a>
+          <a class="botao secundario" href="/">Voltar ao rastreio</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="rodape">
+      <div class="rodape-interno">
+        <span>SVS Rastreio — protótipo acadêmico de referência (dados sintéticos).</span>
+        <span><a href="/docs" target="_blank" rel="noopener">Documentação da API</a> · <a href="/">Início</a></span>
+      </div>
+    </footer>
+
+    <script src="/js/comum.js"></script>
+  </body>
+</html>

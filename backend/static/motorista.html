@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0f766e" />
+    <title>Operação do motorista — SVS Rastreio</title>
+    <meta
+      name="description"
+      content="Área do motorista: viagens do dia, passageiros autorizados, check-in e compartilhamento de posição. Protótipo acadêmico com dados sintéticos."
+    />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/icons/icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/css/app.css" />
+  </head>
+  <body>
+    <a class="skip" href="#conteudo">Ir para o conteúdo</a>
+
+    <header class="topo">
+      <div class="topo-interno">
+        <a class="marca" href="/">
+          <span class="marca-selo" aria-hidden="true">SVS</span>
+          <span>Rastreio<small>Transporte público de saúde</small></span>
+        </a>
+        <nav class="principal" aria-label="Navegação principal">
+          <a href="/">Rastreio</a>
+          <a href="/paciente.html">Passageiro</a>
+          <a href="/motorista.html" aria-current="page">Motorista</a>
+          <a href="/admin.html">Painel</a>
+          <a href="/sobre.html">Sobre</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="conteudo" class="container">
+      <section id="view-login">
+        <div class="hero">
+          <span class="etiqueta">Área restrita</span>
+          <h1>Operação do motorista</h1>
+          <p>
+            Autentique-se com a placa do veículo e o PIN operacional para consultar passageiros,
+            registrar embarques e compartilhar a posição durante a viagem.
+          </p>
+        </div>
+
+        <div class="grid duas">
+          <section class="card" aria-labelledby="titulo-login">
+            <h2 id="titulo-login">Entrar</h2>
+            <form id="form-login" novalidate>
+              <div class="campo">
+                <label for="placa">Placa do veículo</label>
+                <input
+                  id="placa"
+                  name="placa"
+                  type="text"
+                  inputmode="text"
+                  autocomplete="off"
+                  autocapitalize="characters"
+                  spellcheck="false"
+                  maxlength="8"
+                  placeholder="Ex.: SVS1A23"
+                  aria-describedby="dica-placa"
+                  required
+                />
+                <span class="dica" id="dica-placa">Aceita Mercosul e padrão antigo.</span>
+              </div>
+              <div class="campo">
+                <label for="pin">PIN operacional</label>
+                <input
+                  id="pin"
+                  name="pin"
+                  type="password"
+                  inputmode="numeric"
+                  autocomplete="current-password"
+                  maxlength="12"
+                  placeholder="••••"
+                  required
+                />
+              </div>
+              <div class="acoes" style="margin-top: 0.4rem">
+                <button class="botao" type="submit">Entrar</button>
+              </div>
+            </form>
+
+            <p class="miudo" style="margin-top: 1rem">Credenciais de demonstração:</p>
+            <div class="acoes" id="atalhos-motorista">
+              <button class="botao secundario pequeno" type="button" data-placa="SVS1A23" data-pin="1234">
+                SVS1A23 · 1234
+              </button>
+              <button class="botao secundario pequeno" type="button" data-placa="SVS2B34" data-pin="4321">
+                SVS2B34 · 4321
+              </button>
+              <button class="botao secundario pequeno" type="button" data-placa="DEM0C56" data-pin="5678">
+                DEM0C56 · 5678
+              </button>
+            </div>
+          </section>
+
+          <section class="card" aria-labelledby="titulo-seguranca">
+            <h2 id="titulo-seguranca">Como a sessão funciona</h2>
+            <ul class="lista-simples">
+              <li>A sessão é um token assinado (HMAC) com validade de 8 horas, guardado apenas no <code>sessionStorage</code>.</li>
+              <li>O PIN é comparado a um hash HMAC; nunca é armazenado em texto claro.</li>
+              <li>O motorista só acessa viagens do veículo vinculado à própria sessão.</li>
+              <li>Embarques e eventos são registrados em trilha de auditoria com data e hora.</li>
+              <li>A posição enviada pelo aplicativo entra na trilha pública arredondada (~11 m).</li>
+            </ul>
+            <div class="aviso" style="margin-top: 0.8rem">
+              <strong>Uso acadêmico.</strong> Todos os dados são sintéticos. Não utilize este
+              protótipo para operação real sem revisão de segurança e conformidade.
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section id="view-app" hidden>
+        <div class="card">
+          <div class="card-cabecalho">
+            <div class="cresce">
+              <span class="etiqueta">Sessão ativa</span>
+              <h1 id="app-titulo" style="font-size: 1.45rem">Operação do motorista</h1>
+              <p class="miudo" id="app-veiculo" style="margin: 0"></p>
+            </div>
+            <div class="acoes">
+              <a class="botao secundario pequeno" href="/">Mapa público</a>
+              <button class="botao secundario pequeno" type="button" id="btn-sair">Sair</button>
+            </div>
+          </div>
+          <div class="linha">
+            <div class="campo" style="max-width: 220px">
+              <label for="data-operacao">Data da operação</label>
+              <input id="data-operacao" type="date" />
+            </div>
+            <button class="botao secundario" type="button" id="btn-atualizar">Atualizar viagens</button>
+          </div>
+          <p class="miudo" id="sessao-expira" style="margin: 0"></p>
+        </div>
+
+        <div class="grid frota" style="margin-top: 1rem">
+          <section class="card" aria-labelledby="titulo-viagens">
+            <div class="card-cabecalho">
+              <div class="cresce">
+                <h2 id="titulo-viagens">Viagens do dia</h2>
+                <p class="miudo" style="margin: 0">Selecione uma viagem para operar.</p>
+              </div>
+            </div>
+            <div id="lista-viagens" aria-live="polite" aria-busy="true"></div>
+          </section>
+
+          <section class="card" id="detalhe-viagem" aria-live="polite">
+            <div class="vazio" id="detalhe-vazio">
+              <strong>Nenhuma viagem selecionada</strong>
+              Escolha uma viagem na lista para ver passageiros e registrar eventos.
+            </div>
+            <div id="detalhe-conteudo" hidden></div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <footer class="rodape">
+      <div class="rodape-interno">
+        <span>SVS Rastreio — protótipo acadêmico de referência (dados sintéticos).</span>
+        <span
+          ><a href="/docs" target="_blank" rel="noopener">Documentação da API</a> ·
+          <a href="/sobre.html">Metodologia</a></span
+        >
+      </div>
+    </footer>
+
+    <script src="/js/comum.js"></script>
+    <script src="/js/motorista.js"></script>
+  </body>
+</html>

@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0f766e" />
+    <title>Painel operacional — SVS Rastreio</title>
+    <meta
+      name="description"
+      content="Painel administrativo do protótipo: indicadores, viagens, autorizações municipais e exportação de telemetria. Dados sintéticos."
+    />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/icons/icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/css/app.css" />
+  </head>
+  <body>
+    <a class="skip" href="#conteudo">Ir para o conteúdo</a>
+
+    <header class="topo">
+      <div class="topo-interno">
+        <a class="marca" href="/">
+          <span class="marca-selo" aria-hidden="true">SVS</span>
+          <span>Rastreio<small>Transporte público de saúde</small></span>
+        </a>
+        <nav class="principal" aria-label="Navegação principal">
+          <a href="/">Rastreio</a>
+          <a href="/paciente.html">Passageiro</a>
+          <a href="/motorista.html">Motorista</a>
+          <a href="/admin.html" aria-current="page">Painel</a>
+          <a href="/sobre.html">Sobre</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="conteudo" class="container">
+      <section id="view-login">
+        <div class="hero">
+          <span class="etiqueta">Acesso restrito</span>
+          <h1>Painel operacional</h1>
+          <p>
+            Indicadores do dia, viagens, autorizações municipais e exportação de telemetria.
+            O acesso usa uma chave administrativa enviada no cabeçalho <code>X-Admin-Key</code>.
+          </p>
+        </div>
+
+        <div class="grid duas">
+          <section class="card" aria-labelledby="titulo-chave">
+            <h2 id="titulo-chave">Entrar com chave administrativa</h2>
+            <form id="form-admin" novalidate>
+              <div class="campo">
+                <label for="chave">Chave administrativa</label>
+                <input
+                  id="chave"
+                  name="chave"
+                  type="password"
+                  autocomplete="off"
+                  placeholder="chave administrativa"
+                  aria-describedby="dica-chave"
+                  required
+                />
+                <span class="dica" id="dica-chave">
+                  Demonstração local: <code>dev-admin-key</code>. Em produção, use um segredo próprio.
+                </span>
+              </div>
+              <button class="botao" type="submit">Entrar</button>
+            </form>
+            <p class="miudo" style="margin-top: 0.9rem">
+              A chave é mantida apenas no <code>sessionStorage</code> e descartada ao fechar a aba.
+            </p>
+          </section>
+
+          <section class="card" aria-labelledby="titulo-escopo">
+            <h2 id="titulo-escopo">Escopo do painel</h2>
+            <ul class="lista-simples">
+              <li>KPIs operacionais: frota online, viagens, autorizações, embarques, OTIF e atraso médio.</li>
+              <li>Viagens do dia com placa, motorista, status e contagens.</li>
+              <li>Autorizações municipais com aprovação ou negação auditada.</li>
+              <li>Exportação CSV de telemetria limitada a 50 mil linhas por consulta.</li>
+              <li>Nenhum CPF completo é retornado: apenas a versão mascarada.</li>
+            </ul>
+            <div class="aviso" style="margin-top: 0.8rem">
+              <strong>Ambiente de demonstração.</strong> A chave padrão existe apenas no modo
+              <code>dev</code>; a aplicação se recusa a iniciar em <code>prod</code> com segredos padrão.
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section id="view-app" hidden>
+        <div class="card">
+          <div class="card-cabecalho">
+            <div class="cresce">
+              <span class="etiqueta">Painel operacional</span>
+              <h1 style="font-size: 1.45rem; margin: 0.2rem 0">Indicadores do dia</h1>
+              <p class="miudo" id="admin-data-rotulo" style="margin: 0"></p>
+            </div>
+            <div class="acoes">
+              <button class="botao secundario pequeno" type="button" id="btn-sair">Sair</button>
+            </div>
+          </div>
+
+          <div class="linha">
+            <div class="campo" style="max-width: 220px">
+              <label for="data-admin">Data de referência</label>
+              <input id="data-admin" type="date" />
+            </div>
+            <div class="campo" style="max-width: 300px">
+              <label for="validador">Nome do validador</label>
+              <input
+                id="validador"
+                type="text"
+                maxlength="120"
+                placeholder="Ex.: Regulação Municipal"
+              />
+              <span class="dica">Registrado na trilha de auditoria ao aprovar ou negar.</span>
+            </div>
+            <button class="botao secundario" type="button" id="btn-atualizar">Atualizar painel</button>
+          </div>
+        </div>
+
+        <section class="kpis" id="kpis" style="margin-top: 1rem" aria-live="polite" aria-busy="true">
+          <div class="kpi"><span>Carregando</span><strong>—</strong></div>
+        </section>
+
+        <section class="card" style="margin-top: 1rem" aria-labelledby="titulo-viagens-admin">
+          <div class="card-cabecalho">
+            <div class="cresce">
+              <h2 id="titulo-viagens-admin">Viagens da data</h2>
+              <p class="miudo" style="margin: 0">Ordenadas pela partida prevista.</p>
+            </div>
+          </div>
+          <div id="tabela-viagens" aria-live="polite"></div>
+        </section>
+
+        <section class="card" style="margin-top: 1rem" aria-labelledby="titulo-autorizacoes">
+          <div class="card-cabecalho">
+            <div class="cresce">
+              <h2 id="titulo-autorizacoes">Autorizações municipais</h2>
+              <p class="miudo" style="margin: 0">
+                Aprovação ou negação é registrada em auditoria. Aprovar a primeira autorização de
+                uma viagem planejada a move para <em>Autorizada</em>.
+              </p>
+            </div>
+            <span class="pill pill-off" id="contagem-autorizacoes">—</span>
+          </div>
+          <div id="tabela-autorizacoes" aria-live="polite"></div>
+        </section>
+
+        <section class="card" style="margin-top: 1rem" aria-labelledby="titulo-exportacao">
+          <h2 id="titulo-exportacao">Exportar telemetria</h2>
+          <p class="miudo">
+            Gera um CSV com placa, viagem, coordenadas, velocidade, precisão, fonte e horários.
+            A exportação é auditada e limitada a 50 mil linhas.
+          </p>
+          <div class="linha">
+            <div class="campo" style="max-width: 200px">
+              <label for="export-inicio">Início</label>
+              <input id="export-inicio" type="date" />
+            </div>
+            <div class="campo" style="max-width: 200px">
+              <label for="export-fim">Fim</label>
+              <input id="export-fim" type="date" />
+            </div>
+            <button class="botao" type="button" id="btn-exportar">Baixar CSV</button>
+          </div>
+          <p class="miudo" id="export-status" style="margin: 0"></p>
+        </section>
+
+        <p class="selo-lgpd" style="margin-top: 1rem">
+          <span aria-hidden="true">🔒</span>
+          Acesso auditado. CPFs mascarados, telemetria sem vínculo com passageiros e exportação limitada.
+        </p>
+      </section>
+    </main>
+
+    <footer class="rodape">
+      <div class="rodape-interno">
+        <span>SVS Rastreio — protótipo acadêmico de referência (dados sintéticos).</span>
+        <span
+          ><a href="/docs" target="_blank" rel="noopener">Documentação da API</a> ·
+          <a href="/sobre.html">Metodologia</a></span
+        >
+      </div>
+    </footer>
+
+    <script src="/js/comum.js"></script>
+    <script src="/js/admin.js"></script>
+  </body>
+</html>
