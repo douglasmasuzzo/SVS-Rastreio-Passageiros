@@ -1,0 +1,84 @@
+{
+  "gerado_em": "2026-10-29T20:20:43+00:00",
+  "observacao": "Cópias anonimizadas de capturas observacionais. Os originais não são versionados. Tarjas opacas removem CPF, nomes, placas e operadoras antes da conversão para PNG.",
+  "evidencias": [
+    {
+      "id": "E01",
+      "arquivo": "E01.png",
+      "titulo": "Lista pública de veículos",
+      "descricao": "Busca por placa com status online/offline, operadora e última atualização.",
+      "origem": "WhatsApp Image 2026-10-29 at 15.54.41.jpeg",
+      "redacoes": {
+        "placa": 6,
+        "operadora": 3
+      },
+      "sha256": "9ea887398795a2b8696186a2dc85544dce3da07c13a94942532bce01911fffb7"
+    },
+    {
+      "id": "E02",
+      "arquivo": "E02.png",
+      "titulo": "Detalhe do veículo no mapa",
+      "descricao": "Mapa Leaflet, status online, velocidade, distância, precisão e última posição.",
+      "origem": "WhatsApp Image 2026-10-29 at 15.54.41 (2).jpeg",
+      "redacoes": {
+        "placa": 2
+      },
+      "sha256": "0752b19ef23d63150061fa3d42bc4a4ce457aaf413aa6e9905a914b5f08791a2"
+    },
+    {
+      "id": "E03",
+      "arquivo": "E03.png",
+      "titulo": "Consulta por CPF com histórico",
+      "descricao": "Consulta por CPF retornando histórico de viagens e veículos.",
+      "origem": "WhatsApp Image 2026-10-29 at 15.54.42.jpeg",
+      "redacoes": {
+        "cpf": 2,
+        "nome": 5,
+        "placa": 6
+      },
+      "sha256": "d639487fdbdccfe74b49151e76e83772369414ae508160cf32176f87041862d4"
+    },
+    {
+      "id": "E04",
+      "arquivo": "E04.png",
+      "titulo": "Consulta por CPF sem agendamento",
+      "descricao": "CPF localizado sem autorização aprovada para o dia; histórico continua visível.",
+      "origem": "WhatsApp Image 2026-10-29 at 15.54.41 (3).jpeg",
+      "redacoes": {
+        "cpf": 2,
+        "nome": 2,
+        "placa": 2
+      },
+      "sha256": "788917b47bdcf1c98ac9df548a35eb1886bde837bbdb106b9fd85c6402f05d7f"
+    },
+    {
+      "id": "E05",
+      "arquivo": "E05.png",
+      "titulo": "Visão do motorista",
+      "descricao": "Seleção de placa e data; ausência de autorizações municipais para o dia.",
+      "origem": "WhatsApp Image 2026-10-29 at 15.54.41 (1).jpeg",
+      "redacoes": {
+        "placa": 2
+      },
+      "sha256": "0e93d3a89d9ca2ed7990e38f6fd0d8508c176e5734cac99ec1ffeb93b0108bba"
+    },
+    {
+      "id": "E06",
+      "arquivo": "E06.png",
+      "titulo": "Contexto do dispositivo (launcher)",
+      "descricao": "Tela inicial do aparelho usada apenas como contexto; não contém dados do sistema.",
+      "origem": "WhatsApp Image 2026-10-29 at 15.54.40.jpeg",
+      "redacoes": {},
+      "sha256": "7371aa0bfe31eb5d20c87dd537d8232c0d369aeba6963c950d37b9eeb9ac91b8"
+    },
+    {
+      "id": "E07",
+      "arquivo": "E07.png",
+      "titulo": "Contexto do dispositivo (tela limpa)",
+      "descricao": "Captura auxiliar sem conteúdo do sistema; mantida para rastreabilidade do conjunto.",
+      "origem": "WhatsApp Image 2026-10-29 at 15.54.40 (1).jpeg",
+      "redacoes": {},
+      "sha256": "9c3425c0c2bb612aba19d68b5fae9c481f84da6fe7b760cccb64207e5d208dd9"
+    }
+  ]
+}
