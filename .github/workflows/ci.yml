@@ -24,7 +24,7 @@ jobs:
 
     env:
       SVS_ENV: test
-      SVS_DB_URL: sqlite+pysqlite:///:memory:
+      SVS_DB_URL: "sqlite+pysqlite:///:memory:"
       SVS_AUTO_CREATE: "0"
       SVS_AUTO_SEED: "0"
       SVS_CPF_PEPPER: pepper-de-ci
