@@ -1,0 +1,38 @@
+# Contexto de build da imagem (raiz do repositório).
+# Reduz a imagem e evita enviar dados, segredos e artefatos locais ao daemon.
+
+.git
+.github
+.pytest_cache
+.ruff_cache
+__pycache__
+*.pyc
+.venv
+venv
+node_modules
+
+# Dados e segredos locais
+data
+*.db
+*.sqlite
+*.sqlite3
+.env
+infra/.env
+
+# Testes, evidências e documentação não entram na imagem de runtime
+tests
+reverse-engineering
+docs
+analytics
+openapi
+infra/docker-compose.yml
+infra/README.md
+
+# Artefatos de build/editor
+dist
+build
+*.egg-info
+.coverage
+htmlcov
+.DS_Store
+*.log

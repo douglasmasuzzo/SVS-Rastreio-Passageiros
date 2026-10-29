@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  qualidade:
+    name: Python ${{ matrix.python }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.12"]
+
+    env:
+      SVS_ENV: test
+      SVS_DB_URL: sqlite+pysqlite:///:memory:
+      SVS_AUTO_CREATE: "0"
+      SVS_AUTO_SEED: "0"
+      SVS_CPF_PEPPER: pepper-de-ci
+      SVS_DRIVER_SECRET: segredo-de-ci
+      SVS_INGEST_KEY: ingestao-de-ci
+      SVS_ADMIN_KEY: admin-de-ci
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements-dev.txt
+
+      - name: Instalar dependências
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+
+      - name: Lint (Ruff)
+        run: python -m ruff check backend tests scripts analytics
+
+      - name: Testes
+        run: python -m pytest -q
+
+      - name: Sanidade do contrato OpenAPI
+        run: |
+          python scripts/exportar_openapi.py
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          esquema = json.loads(Path("openapi/openapi.json").read_text(encoding="utf-8"))
+          caminhos = esquema.get("paths", {})
+          assert len(caminhos) >= 18, f"OpenAPI inesperado: {len(caminhos)} caminhos"
+          assert "/api/v1/telemetria" in caminhos
+          assert "/api/v1/admin/kpis" in caminhos
+          print(f"OpenAPI ok: {len(caminhos)} caminhos, versão {esquema['info']['version']}")
+          PY
+
+      - name: Sanidade do schema SQL
+        run: |
+          python scripts/gerar_schema_sql.py
+          grep -c "CREATE TABLE" db/schema.sql

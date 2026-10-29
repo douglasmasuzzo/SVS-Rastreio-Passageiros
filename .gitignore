@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+
+# Dados e artefatos locais
+data/
+*.db
+*.sqlite
+*.sqlite3
+*.csv
+!db/*.sql
+!analytics/exemplos/*.csv
+
+# Testes e cobertura
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# Ambiente
+.env
+.env.*
+!.env.example
+
+# Editores / SO
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Evidências originais (não versionar capturas não tratadas)
+reverse-engineering/evidencias/_originais/
+
+# Notebooks
+.ipynb_checkpoints/

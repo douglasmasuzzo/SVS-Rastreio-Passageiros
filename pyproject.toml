@@ -1,0 +1,33 @@
+[project]
+name = "svs-rastreio"
+version = "0.1.0"
+description = "Protótipo de referência (clean-room) de uma plataforma de rastreio logístico de passageiros do transporte público de saúde"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Uso acadêmico — ver NOTICE.md" }
+authors = [{ name = "Douglas Masuzzo" }]
+dependencies = [
+  "fastapi>=0.115,<1.0",
+  "uvicorn[standard]>=0.30,<1.0",
+  "SQLAlchemy>=2.0,<3.0",
+  "pydantic>=2.8,<3.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "httpx>=0.27", "ruff>=0.6", "PyYAML>=6.0", "Pillow>=10.0"]
+postgres = ["psycopg[binary]>=3.2"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["backend", "tests", "analytics", "scripts"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+# B008: o padrão `Depends(...)`/`Query(...)` em assinaturas é idiomático no FastAPI.
+ignore = ["E501", "B008"]
