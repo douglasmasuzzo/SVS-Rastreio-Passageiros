@@ -1,0 +1,80 @@
+# Infraestrutura de referência — API + PostgreSQL 16
+#
+# Uso:
+#   cp infra/.env.example infra/.env
+#   # edite os segredos em infra/.env
+#   docker compose --env-file infra/.env -f infra/docker-compose.yml up --build
+#
+# A PWA fica em http://localhost:8000 e o contrato em /docs.
+# O schema é aplicado pelo entrypoint do PostgreSQL a partir de db/schema.sql;
+# o seed roda uma única vez em um serviço separado e é idempotente.
+
+name: svs-rastreio
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-svs}
+      POSTGRES_USER: ${POSTGRES_USER:-svs}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?defina POSTGRES_PASSWORD em infra/.env}
+      POSTGRES_INITDB_ARGS: "--data-checksums"
+    volumes:
+      - svs-db:/var/lib/postgresql/data
+      - ../db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    # Não publique a porta do banco por padrão. Para inspecionar localmente:
+    # ports: ["127.0.0.1:5432:5432"]
+
+  seed:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile
+    image: svs-rastreio:local
+    depends_on:
+      db:
+        condition: service_healthy
+    environment: &app-env
+      SVS_ENV: prod
+      SVS_DB_URL: postgresql+psycopg://${POSTGRES_USER:-svs}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-svs}
+      SVS_CPF_PEPPER: ${SVS_CPF_PEPPER:?defina SVS_CPF_PEPPER em infra/.env}
+      SVS_DRIVER_SECRET: ${SVS_DRIVER_SECRET:?defina SVS_DRIVER_SECRET em infra/.env}
+      SVS_INGEST_KEY: ${SVS_INGEST_KEY:?defina SVS_INGEST_KEY em infra/.env}
+      SVS_ADMIN_KEY: ${SVS_ADMIN_KEY:?defina SVS_ADMIN_KEY em infra/.env}
+      SVS_AUTO_CREATE: "0"
+      SVS_AUTO_SEED: "0"
+      SVS_OFFLINE_AFTER: ${SVS_OFFLINE_AFTER:-300}
+      SVS_POSITION_DECIMALS: ${SVS_POSITION_DECIMALS:-4}
+      SVS_CORS_ORIGINS: ${SVS_CORS_ORIGINS:-}
+    command: ["python", "-m", "app.seed"]
+    restart: "no"
+
+  api:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile
+    image: svs-rastreio:local
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      seed:
+        condition: service_completed_successfully
+    environment: *app-env
+    ports:
+      - "${SVS_PORT:-8000}:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8000/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+volumes:
+  svs-db:
